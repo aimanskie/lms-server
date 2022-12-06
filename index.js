@@ -19,7 +19,7 @@ mongoose
   .then(() => app.listen(port, () => console.log(`Server is running on port ${port}`)))
   .catch((err) => console.log('db connection error => ', err))
 
-app.use(express.json({ limit: '5mb' }))
+app.use(express.json({ limit: '50mb' }))
 app.use(cookieParser())
 app.use(morgan('dev'))
 
