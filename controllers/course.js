@@ -17,17 +17,11 @@ const awsConfig = {
 const S3 = new AWS.S3(awsConfig)
 
 export const uploadImage = async (req, res) => {
-  // console.log(req.body);
   try {
     const { image } = req.body
     if (!image) return res.status(400).send('No image')
-
-    // prepare the image
     const base64Data = new Buffer.from(image.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-
     const type = image.split(';')[0].split('/')[1]
-
-    // image params
     const params = {
       Bucket: 'ems-dev',
       Key: `${nanoid()}.${type}`,
@@ -37,7 +31,6 @@ export const uploadImage = async (req, res) => {
       ContentType: `image/${type}`,
     }
 
-    // upload to s3
     S3.upload(params, (err, data) => {
       if (err) {
         console.log(err)
@@ -54,13 +47,11 @@ export const uploadImage = async (req, res) => {
 export const removeImage = async (req, res) => {
   try {
     const { image } = req.body
-    // image params
     const params = {
       Bucket: image.Bucket,
       Key: image.Key,
     }
 
-    // send remove request to s3
     S3.deleteObject(params, (err, data) => {
       if (err) {
         console.log(err)
@@ -74,8 +65,6 @@ export const removeImage = async (req, res) => {
 }
 
 export const create = async (req, res) => {
-  // console.log("CREATE COURSE", req.body);
-  // return;
   try {
     const alreadyExist = await Course.findOne({
       slug: slugify(req.body.name.toLowerCase()),
@@ -106,17 +95,13 @@ export const read = async (req, res) => {
 
 export const uploadVideo = async (req, res) => {
   try {
-    // console.log("req.user._id", req.user._id);
-    // console.log("req.params.instructorId", req.params.instructorId);
     if (req.user._id != req.params.instructorId) {
       return res.status(400).send('Unauthorized')
     }
 
     const { video } = req.files
-    // console.log(video);
     if (!video) return res.status(400).send('No video')
 
-    // video params
     const params = {
       Bucket: 'ems-dev',
       Key: `${nanoid()}.${video.type.split('/')[1]}`,
@@ -125,7 +110,6 @@ export const uploadVideo = async (req, res) => {
       ContentType: video.type,
     }
 
-    // upload to s3
     S3.upload(params, (err, data) => {
       if (err) {
         console.log(err)
@@ -146,15 +130,11 @@ export const removeVideo = async (req, res) => {
     }
 
     const { Bucket, Key } = req.body
-    // console.log("VIDEO REMOVE =====> ", req.body);
-
-    // video params
     const params = {
       Bucket,
       Key,
     }
 
-    // upload to s3
     S3.deleteObject(params, (err, data) => {
       if (err) {
         console.log(err)
@@ -196,9 +176,7 @@ export const addLesson = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const { slug } = req.params
-    // console.log(slug);
     const course = await Course.findOne({ slug }).exec()
-    // console.log("COURSE FOUND => ", course);
     if (req.user._id != course.instructor) {
       return res.status(400).send('Unauthorized')
     }
@@ -230,7 +208,6 @@ export const removeLesson = async (req, res) => {
 
 export const updateLesson = async (req, res) => {
   try {
-    // console.log("UPDATE LESSON", req.body);
     const { slug } = req.params
     const { _id, title, content, video, free_preview } = req.body
     const course = await Course.findOne({ slug }).select('instructor').exec()
@@ -251,7 +228,6 @@ export const updateLesson = async (req, res) => {
       },
       { new: true }
     ).exec()
-    // console.log("updated", updated);
     res.json({ ok: true })
   } catch (err) {
     console.log(err)
@@ -300,9 +276,7 @@ export const courses = async (req, res) => {
 
 export const checkEnrollment = async (req, res) => {
   const { courseId } = req.params
-  // find courses of the currently logged in user
   const user = await User.findById(req.user._id).exec()
-  // check if course id is found in user courses array
   let ids = []
   let length = user.courses && user.courses.length
   for (let i = 0; i < length; i++) {
@@ -316,7 +290,6 @@ export const checkEnrollment = async (req, res) => {
 
 export const freeEnrollment = async (req, res) => {
   try {
-    // check if course is free or paid
     const course = await Course.findById(req.params.courseId).exec()
     if (course.paid) return
 
@@ -340,36 +313,29 @@ export const freeEnrollment = async (req, res) => {
 
 export const paidEnrollment = async (req, res) => {
   try {
-    // check if course is free or paid
     const course = await Course.findById(req.params.courseId).populate('instructor').exec()
     if (!course.paid) return
-    // application fee 30%
-    const fee = (course.price * 30) / 100
-    // create stripe session
+    // const fee = (course.price * 30) / 100
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      // purchase details
       line_items: [
         {
           name: course.name,
           amount: Math.round(course.price.toFixed(2) * 100),
-          currency: 'usd',
+          currency: 'myr',
           quantity: 1,
         },
       ],
-      // charge buyer and transfer remaining balance to seller (after fee)
-      payment_intent_data: {
-        application_fee_amount: Math.round(fee.toFixed(2) * 100),
-        transfer_data: {
-          destination: course.instructor.stripe_account_id,
-        },
-      },
-      // redirect url after successful payment
+      // payment_intent_data: {
+      //   application_fee_amount: Math.round(fee.toFixed(2) * 100),
+      //   transfer_data: {
+      //     destination: course.instructor.stripe_account_id,
+      //   },
+      // },
       success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
       cancel_url: process.env.STRIPE_CANCEL_URL,
     })
     console.log('SESSION ID => ', session)
-
     await User.findByIdAndUpdate(req.user._id, {
       stripeSession: session,
     }).exec()
@@ -382,16 +348,11 @@ export const paidEnrollment = async (req, res) => {
 
 export const stripeSuccess = async (req, res) => {
   try {
-    // find course
     const course = await Course.findById(req.params.courseId).exec()
-    // get user from db to get stripe session id
     const user = await User.findById(req.user._id).exec()
-    // if no stripe session return
     if (!user.stripeSession.id) return res.sendStatus(400)
-    // retrieve stripe session
     const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
     console.log('STRIPE SUCCESS', session)
-    // if session payment status is paid, push course to user's course []
     if (session.payment_status === 'paid') {
       await User.findByIdAndUpdate(user._id, {
         $addToSet: { courses: course._id },
@@ -415,15 +376,12 @@ export const userCourses = async (req, res) => {
 
 export const markCompleted = async (req, res) => {
   const { courseId, lessonId } = req.body
-  // console.log(courseId, lessonId);
-  // find if user with that course is already created
   const existing = await Completed.findOne({
     user: req.user._id,
     course: courseId,
   }).exec()
 
   if (existing) {
-    // update
     const updated = await Completed.findOneAndUpdate(
       {
         user: req.user._id,
@@ -435,7 +393,6 @@ export const markCompleted = async (req, res) => {
     ).exec()
     res.json({ ok: true })
   } else {
-    // create
     const created = await new Completed({
       user: req.user._id,
       course: courseId,
