@@ -31,10 +31,39 @@ export const register = async (req, res) => {
       password: hashedPassword,
     })
     await user.save()
-    // console.log("saved user", user);
+
+    const params = {
+      Source: process.env.EMAIL_FROM,
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: `
+                <html>
+                  <h1>Welcome ${name.toUpperCase()}</h1>
+                  <p>This is the best elearning website you will ever be in</p>
+                  <h2>Here is your details</h2>
+                  <h2>name - ${name}</h2>
+                  <h2>email - ${email}</h2>
+                  <i>ems.com</i>
+                </html>
+              `,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Welcome to EMS.COM',
+        },
+      },
+    }
+
+    if (user.email === 'testdev@assohwah.com') await SES.sendEmail(params).promise()
     return res.json({ ok: true })
   } catch (err) {
-    console.log(err)
+    console.log('error register', err)
     return res.status(400).send('Error. Try again.')
   }
 }
@@ -91,8 +120,7 @@ export const currentUser = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body
-    // console.log(email);
-    const shortCode = nanoid(6).toUpperCase()
+    const shortCode = nanoid(8).toUpperCase()
     const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode })
     if (!user) return res.status(400).send('User not found')
 
@@ -111,7 +139,7 @@ export const forgotPassword = async (req, res) => {
                   <h1>Reset password</h1>
                   <p>User this code to reset your password</p>
                   <h2 style="color:red;">${shortCode}</h2>
-                  <i>edemy.com</i>
+                  <i>EMS.com</i>
                 </html>
               `,
           },
@@ -123,15 +151,8 @@ export const forgotPassword = async (req, res) => {
       },
     }
 
-    const emailSent = SES.sendEmail(params).promise()
-    emailSent
-      .then((data) => {
-        console.log(data)
-        res.json({ ok: true })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    await SES.sendEmail(params).promise()
+    res.json({ ok: true })
   } catch (err) {
     console.log(err)
   }
@@ -141,8 +162,7 @@ export const resetPassword = async (req, res) => {
   try {
     const { email, code, newPassword } = req.body
     const hashedPassword = await hashPassword(newPassword)
-
-    const user = User.findOneAndUpdate(
+    const { name } = await User.findOneAndUpdate(
       {
         email,
         passwordResetCode: code,
@@ -151,7 +171,37 @@ export const resetPassword = async (req, res) => {
         password: hashedPassword,
         passwordResetCode: '',
       }
-    ).exec()
+    )
+
+    const params = {
+      Source: process.env.EMAIL_FROM,
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: `
+                <html>
+                  <h1>Welcome ${name.toUpperCase()}</h1>
+                  <p>You just updated your password</p>
+                  <h2>Here is your details</h2>
+                  <h2>name - ${name}</h2>
+                  <h2>email - ${email}</h2>
+                  <i>ems.com</i>
+                </html>
+              `,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Reset Password at EMS.COM',
+        },
+      },
+    }
+
+    await SES.sendEmail(params).promise()
     res.json({ ok: true })
   } catch (err) {
     console.log(err)
