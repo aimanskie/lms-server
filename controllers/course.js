@@ -332,8 +332,10 @@ export const paidEnrollment = async (req, res) => {
       //     destination: course.instructor.stripe_account_id,
       //   },
       // },
-      success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
-      cancel_url: process.env.STRIPE_CANCEL_URL,
+      // success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
+      success_url: `http://assohwah.com/stripe/success/${course._id}`,
+      // cancel_url: process.env.STRIPE_CANCEL_URL,
+      cancel_url: 'http://assohwah.com/stripe/cancel',
     })
     console.log('SESSION ID => ', session)
     await User.findByIdAndUpdate(req.user._id, {
