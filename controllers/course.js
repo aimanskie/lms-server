@@ -375,6 +375,7 @@ export const userCourses = async (req, res) => {
   const courses = await Course.find({ _id: { $in: user.courses } })
     .populate('instructor', '_id name')
     .exec()
+  console.log('userCourses',user)
   res.json(courses)
 }
 

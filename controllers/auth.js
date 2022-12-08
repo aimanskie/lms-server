@@ -101,6 +101,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     res.clearCookie('token')
+    // console.log('requserid logout',req.user._id)
     return res.json({ message: 'Signout success' })
   } catch (err) {
     console.log(err)
@@ -110,8 +111,22 @@ export const logout = async (req, res) => {
 export const currentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password').exec()
-    console.log('CURRENT_USER', user)
+    // console.log('CURRENT_USER', user)
     return res.json({ ok: true })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const currentUser1 = async (req, res) => {
+  try {
+    if (req.user._id) {
+      const user = await User.findById(req.user._id)
+      return res.json(user)
+    } else {
+      return res.json({ ok: true })
+    }
+    // console.log('CURRENT_USER', user)
   } catch (err) {
     console.log(err)
   }
