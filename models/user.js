@@ -34,7 +34,7 @@ const userSchema = new Schema(
     bank: String,
     // stripe_account_id: '',
     // stripe_seller: {},
-    // stripeSession: {},
+    stripeSession: {},
     passwordResetCode: {
       data: String,
       default: '',

@@ -313,6 +313,7 @@ export const freeEnrollment = async (req, res) => {
 
 export const paidEnrollment = async (req, res) => {
   try {
+    console.log('req.params.courseId, paidenrollment', req.params.courseId)
     const course = await Course.findById(req.params.courseId).populate('instructor').exec()
     if (!course.paid) return
     // const fee = (course.price * 30) / 100
@@ -338,6 +339,7 @@ export const paidEnrollment = async (req, res) => {
       cancel_url: 'http://assohwah.com/stripe/cancel',
     })
     console.log('SESSION ID => ', session)
+    console.log('req user ID => ', req.user_id)
     await User.findByIdAndUpdate(req.user._id, {
       stripeSession: session,
     }).exec()
