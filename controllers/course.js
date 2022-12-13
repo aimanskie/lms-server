@@ -33,14 +33,12 @@ export const uploadImage = async (req, res) => {
 
     S3.upload(params, (err, data) => {
       if (err) {
-        console.log(err)
         return res.sendStatus(400)
       }
-      console.log(data)
       res.send(data)
     })
   } catch (err) {
-    console.log(err)
+    res.send(400).json({ error: 'error problem' })
   }
 }
 
@@ -54,7 +52,6 @@ export const removeImage = async (req, res) => {
 
     S3.deleteObject(params, (err, data) => {
       if (err) {
-        console.log(err)
         res.sendStatus(400)
       }
       res.send({ ok: true })
@@ -79,7 +76,6 @@ export const create = async (req, res) => {
 
     res.json(course)
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Course create failed. Try again.')
   }
 }
@@ -112,10 +108,8 @@ export const uploadVideo = async (req, res) => {
 
     S3.upload(params, (err, data) => {
       if (err) {
-        console.log(err)
         res.sendStatus(400)
       }
-      console.log(data)
       res.send(data)
     })
   } catch (err) {
@@ -137,10 +131,8 @@ export const removeVideo = async (req, res) => {
 
     S3.deleteObject(params, (err, data) => {
       if (err) {
-        console.log(err)
         res.sendStatus(400)
       }
-      console.log(data)
       res.send({ ok: true })
     })
   } catch (err) {
@@ -168,7 +160,6 @@ export const addLesson = async (req, res) => {
       .exec()
     res.json(updated)
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Add lesson failed')
   }
 }
@@ -187,7 +178,6 @@ export const update = async (req, res) => {
 
     res.json(updated)
   } catch (err) {
-    console.log(err)
     return res.status(400).send(err.message)
   }
 }
@@ -230,7 +220,6 @@ export const updateLesson = async (req, res) => {
     ).exec()
     res.json({ ok: true })
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Update lesson failed')
   }
 }
@@ -247,7 +236,6 @@ export const publishCourse = async (req, res) => {
     const updated = await Course.findByIdAndUpdate(courseId, { published: true }, { new: true }).exec()
     res.json(updated)
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Publish course failed')
   }
 }
@@ -264,7 +252,6 @@ export const unpublishCourse = async (req, res) => {
     const updated = await Course.findByIdAndUpdate(courseId, { published: false }, { new: true }).exec()
     res.json(updated)
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Unpublish course failed')
   }
 }
@@ -300,25 +287,22 @@ export const freeEnrollment = async (req, res) => {
       },
       { new: true }
     ).exec()
-    console.log(result)
     res.json({
       message: 'Congratulations! You have successfully enrolled',
       course,
     })
   } catch (err) {
-    console.log('free enrollment err', err)
     return res.status(400).send('Enrollment create failed')
   }
 }
 
 export const paidEnrollment = async (req, res) => {
   try {
-    console.log('req.params.courseId, paidenrollment', req.params.courseId)
     const course = await Course.findById(req.params.courseId).populate('instructor').exec()
     if (!course.paid) return
     // const fee = (course.price * 30) / 100
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'fpx'],
       line_items: [
         {
           name: course.name,
@@ -327,25 +311,16 @@ export const paidEnrollment = async (req, res) => {
           quantity: 1,
         },
       ],
-      // payment_intent_data: {
-      //   application_fee_amount: Math.round(fee.toFixed(2) * 100),
-      //   transfer_data: {
-      //     destination: course.instructor.stripe_account_id,
-      //   },
-      // },
-      // success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
-      success_url: `http://assohwah.com/stripe/success/${course._id}`,
-      // cancel_url: process.env.STRIPE_CANCEL_URL,
-      cancel_url: 'http://assohwah.com/stripe/cancel',
+      success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
+      // success_url: `http://assohwah.com/stripe/success/${course._id}`,
+      cancel_url: process.env.STRIPE_CANCEL_URL,
+      // cancel_url: 'http://assohwah.com/stripe/cancel',
     })
-    console.log('SESSION ID => ', session)
-    console.log('req user ID => ', req.user_id)
     await User.findByIdAndUpdate(req.user._id, {
       stripeSession: session,
     }).exec()
     res.send(session.id)
   } catch (err) {
-    console.log('PAID ENROLLMENT ERR', err)
     return res.status(400).send('Enrollment create failed')
   }
 }
@@ -356,7 +331,6 @@ export const stripeSuccess = async (req, res) => {
     const user = await User.findById(req.user._id).exec()
     if (!user.stripeSession.id) return res.sendStatus(400)
     const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
-    console.log('STRIPE SUCCESS', session)
     if (session.payment_status === 'paid') {
       await User.findByIdAndUpdate(user._id, {
         $addToSet: { courses: course._id },
@@ -365,7 +339,6 @@ export const stripeSuccess = async (req, res) => {
     }
     res.json({ success: true, course })
   } catch (err) {
-    console.log('STRIPE SUCCESS ERR', err)
     res.json({ success: false })
   }
 }
@@ -375,7 +348,6 @@ export const userCourses = async (req, res) => {
   const courses = await Course.find({ _id: { $in: user.courses } })
     .populate('instructor', '_id name')
     .exec()
-  console.log('userCourses',user)
   res.json(courses)
 }
 

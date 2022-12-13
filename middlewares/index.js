@@ -32,10 +32,6 @@ export const isEnrolled = async (req, res, next) => {
       ids.push(user.courses[i].toString())
     }
 
-    console.log('MW ids',ids)
-    console.log('MW user',user)
-    console.log('MW course',course)
-
     if (!ids.includes(course._id.toString())) {
       res.sendStatus(403)
     } else {

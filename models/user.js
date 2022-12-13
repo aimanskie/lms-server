@@ -2,6 +2,13 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 const { ObjectId } = Schema
 
+// const userVerification = new Schema(
+//   {
+//     hashedToken: String,
+//     otp: number
+//   }
+// )
+
 const userSchema = new Schema(
   {
     name: {
@@ -40,6 +47,7 @@ const userSchema = new Schema(
       default: '',
     },
     courses: [{ type: ObjectId, ref: 'Course' }],
+    // verified: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

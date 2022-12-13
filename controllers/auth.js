@@ -17,9 +17,8 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body
     if (!name) return res.status(400).send('Name is required')
-    if (!password || password.length < 6) {
-      return res.status(400).send('Password is required and should be min 6 characters long')
-    }
+    // if (!password) res.status(400).send('Password is required')
+    if (password.length < 6) return res.status(400).send('Password should be minimum 6 characters long')
     let userExist = await User.findOne({ email }).exec()
     if (userExist) return res.status(400).send('Email is taken')
 
@@ -32,8 +31,10 @@ export const register = async (req, res) => {
     })
     await user.save()
 
+    // const urlVerify =
+
     const params = {
-      Source: process.env.EMAIL_FROM,
+      Source: `Admin <${process.env.EMAIL_FROM}>`,
       Destination: {
         ToAddresses: [email],
       },
@@ -48,6 +49,7 @@ export const register = async (req, res) => {
                   <h2>Here is your details</h2>
                   <h2>name - ${name}</h2>
                   <h2>email - ${email}</h2>
+                  <h3>please click here to verify your account</h3>
                   <i>ems.com</i>
                 </html>
               `,
@@ -60,17 +62,16 @@ export const register = async (req, res) => {
       },
     }
 
-    if (user.email === 'testdev@assohwah.com') await SES.sendEmail(params).promise()
+    // if (user.email === 'testdev@assohwah.com') await SES.sendEmail(params).promise()
+    await SES.sendEmail(params).promise()
     return res.json({ ok: true })
   } catch (err) {
-    console.log('error register', err)
     return res.status(400).send('Error. Try again.')
   }
 }
 
 export const login = async (req, res) => {
   try {
-    // console.log(req.body);
     const { email, password } = req.body
     // check if our db has user with that email
     const user = await User.findOne({ email }).exec()
@@ -93,7 +94,6 @@ export const login = async (req, res) => {
     // send user as json response
     res.json(user)
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Error. Try again.')
   }
 }
@@ -101,7 +101,6 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     res.clearCookie('token')
-    // console.log('requserid logout',req.user._id)
     return res.json({ message: 'Signout success' })
   } catch (err) {
     console.log(err)
@@ -111,7 +110,6 @@ export const logout = async (req, res) => {
 export const currentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password').exec()
-    // console.log('CURRENT_USER', user)
     return res.json({ ok: true })
   } catch (err) {
     console.log(err)
@@ -126,7 +124,6 @@ export const currentUser1 = async (req, res) => {
     } else {
       return res.json({ ok: true })
     }
-    // console.log('CURRENT_USER', user)
   } catch (err) {
     console.log(err)
   }
@@ -141,7 +138,7 @@ export const forgotPassword = async (req, res) => {
 
     // prepare for email
     const params = {
-      Source: process.env.EMAIL_FROM,
+      Source: `Admin <${process.env.EMAIL_FROM}>`,
       Destination: {
         ToAddresses: [email],
       },
@@ -189,7 +186,7 @@ export const resetPassword = async (req, res) => {
     )
 
     const params = {
-      Source: process.env.EMAIL_FROM,
+      Source: `Admin <${process.env.EMAIL_FROM}>`,
       Destination: {
         ToAddresses: [email],
       },
@@ -219,7 +216,6 @@ export const resetPassword = async (req, res) => {
     await SES.sendEmail(params).promise()
     res.json({ ok: true })
   } catch (err) {
-    console.log(err)
     return res.status(400).send('Error! Try again.')
   }
 }
