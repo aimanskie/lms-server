@@ -49,7 +49,6 @@ export const register = async (req, res) => {
                   <h2>Here is your details</h2>
                   <h2>name - ${name}</h2>
                   <h2>email - ${email}</h2>
-                  <h3>please click here to verify your account</h3>
                   <i>ems.com</i>
                 </html>
               `,
