@@ -367,8 +367,8 @@ export const markCompleted = async (req, res) => {
       {
         $addToSet: { lessons: lessonId },
       }
-    ).exec()
-    res.json({ ok: true })
+    )
+    res.json(updated)
   } else {
     const created = await new Completed({
       user: req.user._id,

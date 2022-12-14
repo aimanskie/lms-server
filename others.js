@@ -1,10 +1,6 @@
-import bcrypt from 'bcrypt'
-
-console.log(bcrypt)
-
-const hashedToken = async (str,salt) => {
-  const hash = await bcrypt.hash(str,salt)
-  console.log(hash)
+const handleClick = (clicked, length) => {
+  if (clicked + 1 === length) console.log('do something')
+  console.log('if not do this')
 }
 
-hashedToken('sdsd',10)
+handleClick(2, 3)
