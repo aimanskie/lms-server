@@ -3,6 +3,7 @@ import { hashPassword, comparePassword } from '../utils/auth'
 import jwt from 'jsonwebtoken'
 import { nanoid } from 'nanoid'
 import AWS from 'aws-sdk'
+import emailValidator from 'email-validator'
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -17,8 +18,13 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body
     if (!name) return res.status(400).send('Name is required')
-    // if (!password) res.status(400).send('Password is required')
     if (password.length < 6) return res.status(400).send('Password should be minimum 6 characters long')
+    if (emailValidator.validate(email)) {
+      console.log('email is valid')
+    } else {
+      return res.status(400).send('Email not valid, try again')
+    }
+
     let userExist = await User.findOne({ email }).exec()
     if (userExist) return res.status(400).send('Email is taken')
 
@@ -30,8 +36,6 @@ export const register = async (req, res) => {
       password: hashedPassword,
     })
     await user.save()
-
-    // const urlVerify =
 
     const params = {
       Source: `Admin <${process.env.EMAIL_FROM}>`,
@@ -62,7 +66,8 @@ export const register = async (req, res) => {
     }
 
     // if (user.email === 'testdev@assohwah.com') await SES.sendEmail(params).promise()
-    await SES.sendEmail(params).promise()
+    const responseEmail = await SES.sendEmail(params).promise()
+    console.log(responseEmail)
     return res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error. Try again.')
