@@ -26,6 +26,7 @@ export const register = async (req, res) => {
     }
 
     let userExist = await User.findOne({ email }).exec()
+    console.log(userExist)
     if (userExist) return res.status(400).send('Email is taken')
 
     const hashedPassword = await hashPassword(password)
@@ -65,7 +66,6 @@ export const register = async (req, res) => {
       },
     }
 
-    // if (user.email === 'testdev@assohwah.com') await SES.sendEmail(params).promise()
     const responseEmail = await SES.sendEmail(params).promise()
     console.log(responseEmail)
     return res.json({ ok: true })
