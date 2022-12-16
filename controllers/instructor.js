@@ -16,7 +16,7 @@ export const becomeInstructor = async (req, res) => {
     const { bank, bankAccount } = req.body
     const user = await User.findById(req.user._id).exec()
     if (!user) {
-      return res.staus(401).send('Unauthorized')
+      return res.status(401).send('Unauthorized')
     } else {
       const statusUpdated = await User.findByIdAndUpdate(
         user._id,

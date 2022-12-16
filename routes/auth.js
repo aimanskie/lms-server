@@ -1,6 +1,14 @@
 import express from 'express'
 import { requireSignin } from '../middlewares'
-import { register, login, logout, currentUser, forgotPassword, resetPassword, currentUser1 } from '../controllers/auth.js'
+import {
+  register,
+  login,
+  logout,
+  currentUser,
+  forgotPassword,
+  resetPassword,
+  currentUser1,
+} from '../controllers/auth.js'
 const router = express.Router()
 
 router.post('/register', register)

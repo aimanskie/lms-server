@@ -93,10 +93,10 @@ export const currentUser = async (req, res) => {
 }
 
 export const currentUser1 = async (req, res) => {
+  console.log('currentuser', req.query.id)
   try {
-    console.log('currentuser1')
-    if (req.user._id) {
-      const user = await User.findById(req.user._id)
+    if (req.query.id) {
+      const user = await User.findById(req.query.id).exec()
       return res.json(user)
     } else {
       return res.json({ ok: true })
