@@ -6,6 +6,7 @@ import slugify from 'slugify'
 import { readFileSync } from 'fs'
 import User from '../models/user'
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
+import { CREATECOURSE } from '../utils/email.js'
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -15,6 +16,7 @@ const awsConfig = {
 }
 
 const S3 = new AWS.S3(awsConfig)
+const SES = new AWS.SES(awsConfig)
 
 export const uploadImage = async (req, res) => {
   try {
@@ -74,6 +76,10 @@ export const create = async (req, res) => {
       ...req.body,
     }).save()
 
+    const { email, name } = await User.findOne({ _id: req.user._id })
+    console.log(email, name)
+
+    await SES.sendEmail(CREATECOURSE(email, name, req.body.name)).promise()
     res.json(course)
   } catch (err) {
     return res.status(400).send('Course create failed. Try again.')
@@ -332,6 +338,7 @@ export const stripeSuccess = async (req, res) => {
     const user = await User.findById(req.user._id).exec()
     if (!user.stripeSession.id) return res.sendStatus(400)
     const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
+    console.log(session)
     if (session.payment_status === 'paid') {
       await User.findByIdAndUpdate(user._id, {
         $addToSet: { courses: course._id },
@@ -340,6 +347,7 @@ export const stripeSuccess = async (req, res) => {
     }
     res.json({ success: true, course })
   } catch (err) {
+    console.log(err)
     res.json({ success: false })
   }
 }

@@ -7,7 +7,7 @@ router.post('/register', register)
 router.post('/login', login)
 router.get('/logout', logout)
 router.get('/current-user', requireSignin, currentUser)
-router.get('/current-user1', requireSignin, currentUser1)
+router.get('/current-user1', currentUser1)
 router.post('/forgot-password', forgotPassword)
 router.post('/reset-password', resetPassword)
 

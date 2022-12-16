@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { nanoid } from 'nanoid'
 import AWS from 'aws-sdk'
 import emailValidator from 'email-validator'
+import { FORGOTPASSWORD, REGISTER, RESETPASSWORD } from '../utils/email.js'
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -38,36 +39,7 @@ export const register = async (req, res) => {
     })
     await user.save()
 
-    const params = {
-      Source: `Admin <${process.env.EMAIL_FROM}>`,
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: `
-                <html>
-                  <h1>Welcome ${name.toUpperCase()}</h1>
-                  <p>This is the best elearning website you will ever be in</p>
-                  <h2>Here is your details</h2>
-                  <h2>name - ${name}</h2>
-                  <h2>email - ${email}</h2>
-                  <i>ems.com</i>
-                </html>
-              `,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: 'Welcome to EMS.COM',
-        },
-      },
-    }
-
-    const responseEmail = await SES.sendEmail(params).promise()
-    console.log(responseEmail)
+    await SES.sendEmail(REGISTER(email, name)).promise()
     return res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error. Try again.')
@@ -122,6 +94,7 @@ export const currentUser = async (req, res) => {
 
 export const currentUser1 = async (req, res) => {
   try {
+    console.log('currentuser1')
     if (req.user._id) {
       const user = await User.findById(req.user._id)
       return res.json(user)
@@ -140,34 +113,7 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode })
     if (!user) return res.status(400).send('User not found')
 
-    // prepare for email
-    const params = {
-      Source: `Admin <${process.env.EMAIL_FROM}>`,
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: `
-                <html>
-                  <h1>Reset password</h1>
-                  <p>User this code to reset your password</p>
-                  <h2 style="color:red;">${shortCode}</h2>
-                  <i>EMS.com</i>
-                </html>
-              `,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: 'Reset Password',
-        },
-      },
-    }
-
-    await SES.sendEmail(params).promise()
+    await SES.sendEmail(FORGOTPASSWORD(email, shortCode)).promise()
     res.json({ ok: true })
   } catch (err) {
     console.log(err)
@@ -188,36 +134,7 @@ export const resetPassword = async (req, res) => {
         passwordResetCode: '',
       }
     )
-
-    const params = {
-      Source: `Admin <${process.env.EMAIL_FROM}>`,
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: `
-                <html>
-                  <h1>Welcome ${name.toUpperCase()}</h1>
-                  <p>You just updated your password</p>
-                  <h2>Here is your details</h2>
-                  <h2>name - ${name}</h2>
-                  <h2>email - ${email}</h2>
-                  <i>ems.com</i>
-                </html>
-              `,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: 'Reset Password at EMS.COM',
-        },
-      },
-    }
-
-    await SES.sendEmail(params).promise()
+    await SES.sendEmail(RESETPASSWORD).promise()
     res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error! Try again.')
