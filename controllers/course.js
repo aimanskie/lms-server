@@ -6,7 +6,7 @@ import slugify from 'slugify'
 import { readFileSync } from 'fs'
 import User from '../models/user'
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
-import { CREATECOURSE } from '../utils/email.js'
+import { CREATECOURSE, PAIDCOURSE } from '../utils/email.js'
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -338,13 +338,22 @@ export const stripeSuccess = async (req, res) => {
     const user = await User.findById(req.user._id).exec()
     if (!user.stripeSession.id) return res.sendStatus(400)
     const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
-    console.log(session)
+
     if (session.payment_status === 'paid') {
       await User.findByIdAndUpdate(user._id, {
         $addToSet: { courses: course._id },
         $set: { stripeSession: {} },
       }).exec()
+      const {
+        id,
+        amount_total,
+        currency,
+        customer_details: { address, email, name },
+      } = session
+
+      await SES.sendEmail(PAIDCOURSE(id, amount_total, currency, address, email, name, course._id)).promise()
     }
+
     res.json({ success: true, course })
   } catch (err) {
     console.log(err)

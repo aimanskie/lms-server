@@ -122,3 +122,52 @@ export const CREATECOURSE = (email, name, title) => {
   }
   return createCourse
 }
+
+export const PAIDCOURSE = (
+  id,
+  total,
+  currency,
+  { city, country, line1, line2, postal_code, state },
+  email,
+  name,
+  courseId
+) => {
+  const paidCourse = {
+    Source: `Admin <${process.env.EMAIL_FROM}>`,
+    Destination: {
+      ToAddresses: [email],
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: 'UTF-8',
+          Data: `
+          <html>
+          <h1>Congrats you created a course! ${name.toUpperCase()}</h1>
+          <p>You just updated your password</p>
+          <p>${currency}${total}</p>
+          <h2>Here is your details</h2>
+          <h2>name - ${name}</h2>
+          <h2>email - ${email}</h2>
+          <h2>with title - ${courseId}</h2>
+          <h2>payment id - ${id}</h2>
+          <h2>Address</h2>
+          <p>City - ${city}</p>
+          <p>Street - ${line1}${line2}</p>
+          <p>Poscode - ${postal_code}</p>
+          <p>State - ${state}</p>
+          <p>Country - ${country}</p>
+          <p>Now you can go and add lessons!</p>
+          <i>ems.com</i>
+          </html>
+          `,
+        },
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'Congrats on your purchase!',
+      },
+    },
+  }
+  return paidCourse
+}
