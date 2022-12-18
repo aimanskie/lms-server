@@ -338,7 +338,7 @@ export const stripeSuccess = async (req, res) => {
     const user = await User.findById(req.user._id).exec()
     if (!user.stripeSession.id) return res.sendStatus(400)
     const session = await stripe.checkout.sessions.retrieve(user.stripeSession.id)
-
+    console.log(course)
     if (session.payment_status === 'paid') {
       await User.findByIdAndUpdate(user._id, {
         $addToSet: { courses: course._id },
@@ -351,7 +351,7 @@ export const stripeSuccess = async (req, res) => {
         customer_details: { address, email, name },
       } = session
 
-      await SES.sendEmail(PAIDCOURSE(id, amount_total, currency, address, email, name, course._id)).promise()
+      await SES.sendEmail(PAIDCOURSE(id, amount_total, currency, address, email, name, course)).promise()
     }
 
     res.json({ success: true, course })
@@ -375,7 +375,14 @@ export const markCompleted = async (req, res) => {
     user: req.user._id,
     course: courseId,
   }).exec()
-
+  if (!existing) {
+    const created = await new Completed({
+      user: req.user._id,
+      course: courseId,
+      lessons: lessonId,
+    }).save()
+    res.json({ created })
+  }
   if (existing) {
     const updated = await Completed.findOneAndUpdate(
       {
@@ -387,13 +394,6 @@ export const markCompleted = async (req, res) => {
       }
     )
     res.json(updated)
-  } else {
-    const created = await new Completed({
-      user: req.user._id,
-      course: courseId,
-      lessons: lessonId,
-    }).save()
-    res.json({ created })
   }
 }
 

@@ -130,7 +130,7 @@ export const PAIDCOURSE = (
   { city, country, line1, line2, postal_code, state },
   email,
   name,
-  courseId
+  { description, image: { Location } }
 ) => {
   const paidCourse = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
@@ -145,12 +145,14 @@ export const PAIDCOURSE = (
           <html>
           <h1>Congrats you created a course! ${name.toUpperCase()}</h1>
           <p>You just updated your password</p>
-          <p>${currency}${total}</p>
+          <p>${currency}${total / 100}</p>
           <h2>Here is your details</h2>
           <h2>name - ${name}</h2>
           <h2>email - ${email}</h2>
-          <h2>with title - ${courseId}</h2>
+          <h2>with title - ${description}</h2>
           <h2>payment id - ${id}</h2>
+          <img src=${Location}>Course Image ${Location}</img>
+
           <h2>Address</h2>
           <p>City - ${city}</p>
           <p>Street - ${line1}${line2}</p>
