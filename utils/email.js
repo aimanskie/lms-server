@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 export const FORGOTPASSWORD = (email, shortCode) => {
   const emailTemplate = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
@@ -28,7 +30,7 @@ export const FORGOTPASSWORD = (email, shortCode) => {
   return emailTemplate
 }
 
-export const REGISTER = (email, name) => {
+export const REGISTER = (email, name, token) => {
   const registerEmail = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
     Destination: {
@@ -45,6 +47,7 @@ export const REGISTER = (email, name) => {
                   <h2>Here is your details</h2>
                   <h2>name - ${name}</h2>
                   <h2>email - ${email}</h2>
+                  <a href='${process.env.URL}/api/confirmation/${token}'><strong>Confirm you email<strong></a>
                   <i>ems.com</i>
                 </html>
               `,
@@ -59,7 +62,7 @@ export const REGISTER = (email, name) => {
   return registerEmail
 }
 
-export const RESETPASSWORD = () => {
+export const RESETPASSWORD = (email, name) => {
   const resetPassword = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
     Destination: {

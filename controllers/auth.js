@@ -21,29 +21,42 @@ export const register = async (req, res) => {
     if (!name) return res.status(400).send('Name is required')
     if (password.length < 6) return res.status(400).send('Password should be minimum 6 characters long')
     if (emailValidator.validate(email)) {
-      console.log('email is valid')
     } else {
       return res.status(400).send('Email not valid, try again')
     }
 
     let userExist = await User.findOne({ email }).exec()
-    console.log(userExist)
-    if (userExist) return res.status(400).send('Email is taken')
+    if (userExist) {
+      return res.status(400).send('Email is taken')
+    }
 
     const hashedPassword = await hashPassword(password)
-
+    const token = jwt.sign({ _id: nanoid(10) }, process.env.JWT_SECRET, {
+      expiresIn: '1m',
+    })
     const user = new User({
       name,
       email,
       password: hashedPassword,
+      token,
     })
     await user.save()
 
-    await SES.sendEmail(REGISTER(email, name)).promise()
+    const emailSent = await SES.sendEmail(REGISTER(email, name, token)).promise()
     return res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error. Try again.')
   }
+}
+
+export const confirm = async (req, res, next) => {
+  const token = req.params.token
+  const tokenUser = await User.findOne({ token }).exec()
+  if (tokenUser) {
+    return res.redirect(`${process.env.URL}/login`)
+  }
+  await User.findOneAndDelete({ token }).exec()
+  res.redirect(`${process.env.URL}/register`)
 }
 
 export const login = async (req, res) => {
@@ -93,7 +106,6 @@ export const currentUser = async (req, res) => {
 }
 
 export const currentUser1 = async (req, res) => {
-  console.log('currentuser', req.query.id)
   try {
     if (req.query.id) {
       const user = await User.findById(req.query.id).exec()
@@ -134,7 +146,7 @@ export const resetPassword = async (req, res) => {
         passwordResetCode: '',
       }
     )
-    await SES.sendEmail(RESETPASSWORD).promise()
+    await SES.sendEmail(RESETPASSWORD(email, name)).promise()
     res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error! Try again.')

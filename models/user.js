@@ -2,13 +2,6 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 const { ObjectId } = Schema
 
-// const userVerification = new Schema(
-//   {
-//     hashedToken: String,
-//     otp: number
-//   }
-// )
-
 const userSchema = new Schema(
   {
     name: {
@@ -47,9 +40,22 @@ const userSchema = new Schema(
       default: '',
     },
     courses: [{ type: ObjectId, ref: 'Course' }],
-    // verified: { type: Boolean, default: false },
+    token: String,
   },
   { timestamps: true }
 )
 
-export default mongoose.model('User', userSchema)
+// userSchema.pre('save', async function (next) {
+//   const id = setTimeout(async function () {
+//     const document = await this.findOne(this.token)
+//     await document.remove()
+//   }, 120000)
+//   this.timerId = id
+//   console.log(this)
+//   const document = await this.findOne(this.token)
+//   clearTimeout(document.id)
+//   next()
+// })
+
+const User = mongoose.model('User', userSchema)
+export default User
