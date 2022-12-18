@@ -28,6 +28,7 @@
     "nodemon": "^2.0.7",
     "query-string": "^7.0.0",
     "slugify": "^1.5.0",
+    "smart-timeout": "^2.7.1",
     "stripe": "^8.141.0"
   }
 }

@@ -1,10 +1,11 @@
-import User from '../models/user'
-import { hashPassword, comparePassword } from '../utils/auth'
+import User from '../models/user.js'
+import { hashPassword, comparePassword } from '../utils/auth.js'
 import jwt from 'jsonwebtoken'
 import { nanoid } from 'nanoid'
 import AWS from 'aws-sdk'
 import emailValidator from 'email-validator'
 import { FORGOTPASSWORD, REGISTER, RESETPASSWORD } from '../utils/email.js'
+import Timeout from 'smart-timeout'
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -39,10 +40,11 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
       token,
+      checking: false,
     })
     await user.save()
 
-    const emailSent = await SES.sendEmail(REGISTER(email, name, token)).promise()
+    await SES.sendEmail(REGISTER(email, name, token)).promise()
     return res.json({ ok: true })
   } catch (err) {
     return res.status(400).send('Error. Try again.')
@@ -51,19 +53,18 @@ export const register = async (req, res) => {
 
 export const confirm = async (req, res, next) => {
   const token = req.params.token
-  const tokenUser = await User.findOne({ token }).exec()
+  const tokenUser = await User.findOneAndUpdate({ token }, { checking: true })
+  Timeout.clear('original_timeout')
   if (tokenUser) {
     return res.redirect(`${process.env.URL}/login`)
   }
-  await User.findOneAndDelete({ token }).exec()
   res.redirect(`${process.env.URL}/register`)
 }
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body
-    // check if our db has user with that email
-    const user = await User.findOne({ email }).exec()
+    const user = await User.findOne({ checking: true }).exec()
     if (!user) return res.status(400).send('No user found')
     // check password
     const match = await comparePassword(password, user.password)

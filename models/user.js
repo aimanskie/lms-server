@@ -1,3 +1,4 @@
+import Timeout from 'smart-timeout'
 import mongoose from 'mongoose'
 const { Schema } = mongoose
 const { ObjectId } = Schema
@@ -41,21 +42,27 @@ const userSchema = new Schema(
     },
     courses: [{ type: ObjectId, ref: 'Course' }],
     token: String,
+    checking: Boolean,
   },
   { timestamps: true }
 )
 
-// userSchema.pre('save', async function (next) {
-//   const id = setTimeout(async function () {
-//     const document = await this.findOne(this.token)
-//     await document.remove()
-//   }, 120000)
-//   this.timerId = id
-//   console.log(this)
-//   const document = await this.findOne(this.token)
-//   clearTimeout(document.id)
-//   next()
-// })
+userSchema.pre('save', async function (next) {
+  const token = this.token
+  const originalTimeout = Timeout.instantiate(
+    'original_timeout',
+    async () => {
+      try {
+        const document = await User.findOneAndDelete({ token })
+        console.log('deleted complete')
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    30000
+  )
+  next()
+})
 
 const User = mongoose.model('User', userSchema)
 export default User
