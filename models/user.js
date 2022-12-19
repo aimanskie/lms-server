@@ -59,7 +59,7 @@ userSchema.pre('save', async function (next) {
         console.log(err)
       }
     },
-    30000
+    120000
   )
   next()
 })

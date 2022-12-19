@@ -64,7 +64,7 @@ export const confirm = async (req, res, next) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body
-    const user = await User.findOne({ checking: true }).exec()
+    const user = await User.findOne({ checking: true, email }).exec()
     if (!user) return res.status(400).send('No user found')
     // check password
     const match = await comparePassword(password, user.password)
