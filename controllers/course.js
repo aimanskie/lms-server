@@ -349,9 +349,15 @@ export const stripeSuccess = async (req, res) => {
         amount_total,
         currency,
         customer_details: { address, email, name },
+        created,
+        payment_intent,
       } = session
 
-      await SES.sendEmail(PAIDCOURSE(id, amount_total, currency, address, email, name, course)).promise()
+      let date = new Date(created * 1000).toJSON().slice(0, 10).split('-').reverse().join('/')
+
+      await SES.sendEmail(
+        PAIDCOURSE(id, amount_total, currency, address, email, name, course, date, payment_intent)
+      ).promise()
     }
 
     res.json({ success: true, course })
