@@ -90,7 +90,7 @@ export const REGISTER = (email, name, token) => {
             <tr>
               <td align="center">
                 <img
-                  src="https://drive.google.com/file/d/1_6KcQku-fTZyCVJTLZzCFKqouvFeyoGr/view?usp=sharing"
+                  src="https://ems-dev.s3.ap-southeast-1.amazonaws.com/White+Yellow+Bold+Special+Offers+Sale+Email+Header.png"
                   alt=""
                   width="600"
                   style="height: auto; display: block"
@@ -140,7 +140,7 @@ export const REGISTER = (email, name, token) => {
                         "
                       >Please confirm you email here
                         <a
-                          href="${process.env}/api/confirmation/${token}"
+                          href="${process.env.URL}/api/confirmation/${token}"
                           style="color: #ee4c50; text-decoration: underline"
                           >${token}</a
                         >
