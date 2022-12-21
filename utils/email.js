@@ -11,18 +11,217 @@ export const FORGOTPASSWORD = (email, shortCode) => {
         Html: {
           Charset: 'UTF-8',
           Data: `
-                <html>
-                  <h1>Reset password</h1>
-                  <p>User this code to reset your password</p>
-                  <h2 style="color:red;">${shortCode}</h2>
-                  <i>EMS.com</i>
-                </html>
+                <!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title></title>
+
+    <style>
+      table,
+      td,
+      div,
+      h1,
+      p {
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0">
+    <table
+      role="presentation"
+      style="
+        width: 100%;
+        border-collapse: collapse;
+        border: 0;
+        border-spacing: 0;
+        background: #ffffff;
+        background-color: #edece6;
+      "
+    >
+      <tr>
+        <td align="center" style="padding: 0">
+          <table
+            role="presentation"
+            style="
+              width: 602px;
+              border-collapse: collapse;
+              border: 1px solid #cccccc;
+              border-spacing: 0;
+              text-align: left;
+            "
+          >
+            <tr>
+              <td align="center">
+                <img
+                  src="${process.env.BANNER}"
+                  alt=""
+                  width="600"
+                  style="height: auto; display: block"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 36px 30px 42px 30px">
+                <table
+                  role="presentation"
+                  style="
+                    width: 100%;
+                    border-collapse: collapse;
+                    border: 0;
+                    border-spacing: 0;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 0 0 36px 0; color: #153643">
+                      <h1
+                        style="
+                          font-size: 24px;
+                          margin: 0 0 20px 0;
+                          font-family: Arial, sans-serif;
+                        "
+                      >
+                        Don't worry ${name} please copy paste the Code below
+                      </h1>
+                      <p
+                        style="
+                          margin: 0 0 12px 0;
+                          font-size: 16px;
+                          line-height: 24px;
+                          font-family: Arial, sans-serif;
+                        "
+                      >
+                        This is code ${shortCode}, copy paste it at the forgot password page. 
+                      </p>
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 16px;
+                          line-height: 24px;
+                          font-family: Arial, sans-serif;
+                        "
+                      >
+                        <a
+                          href="${process.env.URL}/forgot-password"
+                          style="color: #ee4c50; text-decoration: underline"
+                          >forgot password page</a
+                        >
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0">
+                      <table
+                        role="presentation"
+                        style="
+                          width: 100%;
+                          border-collapse: collapse;
+                          border: 0;
+                          border-spacing: 0;
+                        "
+                      >
+                        <tr>
+                          <td
+                            style="
+                              width: 20px;
+                              padding: 0;
+                              font-size: 0;
+                              line-height: 0;
+                            "
+                          >
+                            &nbsp;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 30px; background: #ee8d4c">
+                <table
+                  role="presentation"
+                  style="
+                    width: 100%;
+                    border-collapse: collapse;
+                    border: 0;
+                    border-spacing: 0;
+                    font-size: 9px;
+                    font-family: Arial, sans-serif;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 0; width: 50%" align="left">
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 14px;
+                          line-height: 16px;
+                          font-family: Arial, sans-serif;
+                          color: #ffffff;
+                        "
+                      >
+                        &reg; Aimanskie, 2023
+                      </p>
+                    </td>
+                    <td style="padding: 0; width: 50%" align="right">
+                      <table
+                        role="presentation"
+                        style="
+                          border-collapse: collapse;
+                          border: 0;
+                          border-spacing: 0;
+                        "
+                      >
+                        <tr>
+                          <td style="padding: 0 0 0 10px; width: 38px">
+                            <a
+                              href="http://www.twitter.com/"
+                              style="color: #ffffff"
+                              ><img
+                                src="https://assets.codepen.io/210284/tw_1.png"
+                                alt="Twitter"
+                                width="38"
+                                style="height: auto; display: block; border: 0"
+                            /></a>
+                          </td>
+                          <td style="padding: 0 0 0 10px; width: 38px">
+                            <a
+                              href="http://www.facebook.com/"
+                              style="color: #ffffff"
+                              ><img
+                                src="https://assets.codepen.io/210284/fb_1.png"
+                                alt="Facebook"
+                                width="38"
+                                style="height: auto; display: block; border: 0"
+                            /></a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
               `,
         },
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: `Reset Password at ${process.env.BRAND}`,
+        Data: `Code to Reset Password at ${process.env.BRAND}`,
       },
     },
   }
@@ -90,7 +289,7 @@ export const REGISTER = (email, name, token) => {
             <tr>
               <td align="center">
                 <img
-                  src="https://ems-dev.s3.ap-southeast-1.amazonaws.com/White+Yellow+Bold+Special+Offers+Sale+Email+Header.png"
+                  src="${process.env.BANNER}"
                   alt=""
                   width="600"
                   style="height: auto; display: block"
@@ -271,211 +470,7 @@ export const RESETPASSWORD = (email, name) => {
         Html: {
           Charset: 'UTF-8',
           Data: `
-<!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:o="urn:schemas-microsoft-com:office:office"
->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="x-apple-disable-message-reformatting" />
-    <title></title>
-
-    <style>
-      table,
-      td,
-      div,
-      h1,
-      p {
-        font-family: Arial, sans-serif;
-      }
-    </style>
-  </head>
-  <body style="margin: 0; padding: 0">
-    <table
-      role="presentation"
-      style="
-        width: 100%;
-        border-collapse: collapse;
-        border: 0;
-        border-spacing: 0;
-        background: #ffffff;
-        background-color: #edece6;
-      "
-    >
-      <tr>
-        <td align="center" style="padding: 0">
-          <table
-            role="presentation"
-            style="
-              width: 602px;
-              border-collapse: collapse;
-              border: 1px solid #cccccc;
-              border-spacing: 0;
-              text-align: left;
-            "
-          >
-            <tr>
-              <td align="center">
-                <img
-                  src="assets/edu2.png"
-                  alt=""
-                  width="600"
-                  style="height: auto; display: block"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 36px 30px 42px 30px">
-                <table
-                  role="presentation"
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    border: 0;
-                    border-spacing: 0;
-                  "
-                >
-                  <tr>
-                    <td style="padding: 0 0 36px 0; color: #153643">
-                      <h1
-                        style="
-                          font-size: 24px;
-                          margin: 0 0 20px 0;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        Don't worry ${name} please copy paste the Code below
-                      </h1>
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        This is code ${shortCode}, copy paste it at the forgot password page. 
-                      </p>
-                      <p
-                        style="
-                          margin: 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        <a
-                          href="https://assohwah.com/forgot-password"
-                          style="color: #ee4c50; text-decoration: underline"
-                          >forgot password page</a
-                        >
-                      </p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 0">
-                      <table
-                        role="presentation"
-                        style="
-                          width: 100%;
-                          border-collapse: collapse;
-                          border: 0;
-                          border-spacing: 0;
-                        "
-                      >
-                        <tr>
-                          <td
-                            style="
-                              width: 20px;
-                              padding: 0;
-                              font-size: 0;
-                              line-height: 0;
-                            "
-                          >
-                            &nbsp;
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 30px; background: #ee8d4c">
-                <table
-                  role="presentation"
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    border: 0;
-                    border-spacing: 0;
-                    font-size: 9px;
-                    font-family: Arial, sans-serif;
-                  "
-                >
-                  <tr>
-                    <td style="padding: 0; width: 50%" align="left">
-                      <p
-                        style="
-                          margin: 0;
-                          font-size: 14px;
-                          line-height: 16px;
-                          font-family: Arial, sans-serif;
-                          color: #ffffff;
-                        "
-                      >
-                        &reg; Aimanskie, 2023
-                      </p>
-                    </td>
-                    <td style="padding: 0; width: 50%" align="right">
-                      <table
-                        role="presentation"
-                        style="
-                          border-collapse: collapse;
-                          border: 0;
-                          border-spacing: 0;
-                        "
-                      >
-                        <tr>
-                          <td style="padding: 0 0 0 10px; width: 38px">
-                            <a
-                              href="http://www.twitter.com/"
-                              style="color: #ffffff"
-                              ><img
-                                src="https://assets.codepen.io/210284/tw_1.png"
-                                alt="Twitter"
-                                width="38"
-                                style="height: auto; display: block; border: 0"
-                            /></a>
-                          </td>
-                          <td style="padding: 0 0 0 10px; width: 38px">
-                            <a
-                              href="http://www.facebook.com/"
-                              style="color: #ffffff"
-                              ><img
-                                src="https://assets.codepen.io/210284/fb_1.png"
-                                alt="Facebook"
-                                width="38"
-                                style="height: auto; display: block; border: 0"
-                            /></a>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+<h2>We would like to inform you that you have successfully changed your password, if you have not done so please let us know <a href='mailto:admin@assohwah.com>here</a></h2>
 `,
         },
       },
@@ -500,11 +495,7 @@ export const CREATECOURSE = (email, name, title) => {
           Charset: 'UTF-8',
           Data: `
           <html>
-          <h1>Congrats you created a course! ${name.toUpperCase()}</h1>
-          <h2>Here is your details</h2>
-          <h2>name - ${name}</h2>
-          <h2>email - ${email}</h2>
-          <h2>with title - ${title}
+          <h1>Congrats you created a course titled <strong>${title}</strong> !</h1>
           </html>
           `,
         },
