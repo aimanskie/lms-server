@@ -125,8 +125,7 @@ export const forgotPassword = async (req, res) => {
     const shortCode = nanoid(8).toUpperCase()
     const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode })
     if (!user) return res.status(400).send('User not found')
-
-    await SES.sendEmail(FORGOTPASSWORD(email, shortCode)).promise()
+    await SES.sendEmail(FORGOTPASSWORD(email, shortCode, user.name)).promise()
     res.json({ ok: true })
   } catch (err) {
     console.log(err)

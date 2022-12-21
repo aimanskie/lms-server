@@ -1,6 +1,6 @@
 import express from 'express'
 import formidable from 'express-formidable'
-import { requireSignin, isInstructor, isEnrolled } from '../middlewares'
+import { requireSignin, isInstructor, isEnrolled, isAdmin } from '../middlewares'
 import {
   uploadImage,
   removeImage,
@@ -23,6 +23,7 @@ import {
   markCompleted,
   listCompleted,
   markIncomplete,
+  allUsers,
 } from '../controllers/course.js'
 const router = express.Router()
 
@@ -57,6 +58,7 @@ router.get('/stripe-success/:courseId', requireSignin, stripeSuccess)
 
 router.get('/user-courses', requireSignin, userCourses)
 router.get('/user/course/:slug', requireSignin, isEnrolled, read)
+router.get('/user', requireSignin, isAdmin, allUsers)
 
 router.post('/mark-completed', requireSignin, markCompleted)
 router.post('/list-completed', requireSignin, listCompleted)

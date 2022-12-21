@@ -95,6 +95,16 @@ export const read = async (req, res) => {
   }
 }
 
+export const allUsers = async (req, res) => {
+  try {
+    const users = await User.find().exec()
+    // console.log(users)
+    res.json(users)
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 export const uploadVideo = async (req, res) => {
   try {
     if (req.user._id != req.params.instructorId) {

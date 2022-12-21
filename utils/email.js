@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-export const FORGOTPASSWORD = (email, shortCode) => {
+export const FORGOTPASSWORD = (email, shortCode, name) => {
   const emailTemplate = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
     Destination: {
@@ -97,7 +97,7 @@ export const FORGOTPASSWORD = (email, shortCode) => {
                           font-family: Arial, sans-serif;
                         "
                       >
-                        This is code ${shortCode}, copy paste it at the forgot password page. 
+                        This is code <strong style='color:red;'>${shortCode}</strong>, copy paste it at the forgot password page. 
                       </p>
                       <p
                         style="
@@ -470,7 +470,7 @@ export const RESETPASSWORD = (email, name) => {
         Html: {
           Charset: 'UTF-8',
           Data: `
-<h2>We would like to inform you that you have successfully changed your password, if you have not done so please let us know <a href='mailto:admin@assohwah.com>here</a></h2>
+<h2>We would like to inform you that you have successfully changed your password, if you have not done so please let us know</h2><a href='mailto:admin@assohwah.com'>email here</a>
 `,
         },
       },

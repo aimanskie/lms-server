@@ -28,7 +28,7 @@ const userSchema = new Schema(
     },
     role: {
       type: [String],
-      default: ['Subscriber'],
+      default: ['Instructor'],
       enum: ['Subscriber', 'Admin'],
     },
     bankAccount: String,
