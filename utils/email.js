@@ -97,21 +97,8 @@ export const FORGOTPASSWORD = (email, shortCode, name) => {
                           font-family: Arial, sans-serif;
                         "
                       >
-                        This is code <strong style='color:red;'>${shortCode}</strong>, copy paste it at the forgot password page. 
-                      </p>
-                      <p
-                        style="
-                          margin: 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        <a
-                          href="${process.env.URL}/forgot-password"
-                          style="color: #ee4c50; text-decoration: underline"
-                          >forgot password page</a
-                        >
+                        This is code <strong style='color:red;'>${shortCode}</strong></p>
+                        <p>copy paste it at the forgot password page. 
                       </p>
                     </td>
                   </tr>
@@ -521,6 +508,7 @@ export const PAIDCOURSE = (
   date,
   transactionId
 ) => {
+  let totalFixed = (totalFixedFixed / 100).toFixed(2)
   const paidCourse = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
     Destination: {
@@ -683,7 +671,7 @@ export const PAIDCOURSE = (
                                         <td width="80" height="20" valign="top" style="font-size:16px;line-height:20px;display:none;text-align:left;padding-right:15px!important"><strong></strong></td>
                                         <td width="56" align="left" style="font-family:'Source Sans Pro',Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:0;line-height:20px;text-align:left"></td>
                                         <td width="80" height="20" valign="top" style="font-size:16px;line-height:20px;display:none;text-align:left;padding-right:15px!important"><strong>Price:</strong></td>
-                                        <td width="56" align="left" style="font-family:'Source Sans Pro',Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:0;line-height:20px;text-align:left">RM${total}</td>
+                                        <td width="56" align="left" style="font-family:'Source Sans Pro',Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:0;line-height:20px;text-align:right">RM ${totalFixedFixed}</td>
                                       </tr>
                                     </tbody>
                                   </table></td>
@@ -704,8 +692,8 @@ export const PAIDCOURSE = (
                         <tbody>
                           
                          <tr>
-                            <td height="20" valign="top" style="font-size:16px;line-height:20px;text-align:right;padding-right:18px!important"><strong>Total:</strong></td>
-                            <td width="56" align="left" style="font-family:'Source Sans Pro',Helvetica,Arial,sans-serif;font-size:18px;letter-spacing:0;line-height:20px;text-align:left">RM${total}</td>
+                            <td height="20" valign="top" style="font-size:16px;line-height:20px;text-align:right;padding-right:18px!important"><strong>TotalFixed:</strong></td>
+                            <td width="56" align="left" style="font-family:'Source Sans Pro',Helvetica,Arial,sans-serif;font-size:18px;letter-spacing:0;line-height:20px;text-align:left">RM ${totalFixed}</td>
                           </tr>
                         </tbody>
                       </table></td>
