@@ -29,7 +29,7 @@ const userSchema = new Schema(
     role: {
       type: [String],
       default: ['Instructor'],
-      enum: ['Subscriber', 'Admin'],
+      enum: ['Instructor', 'Subscriber', 'Admin'],
     },
     bankAccount: String,
     bank: String,
@@ -54,7 +54,6 @@ userSchema.pre('save', async function (next) {
     async () => {
       try {
         const document = await User.findOneAndDelete({ token })
-        console.log('deleted complete')
       } catch (err) {
         console.log(err)
       }

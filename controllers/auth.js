@@ -25,12 +25,10 @@ export const register = async (req, res) => {
     } else {
       return res.status(400).send('Email not valid, try again')
     }
-
     let userExist = await User.findOne({ email }).exec()
     if (userExist) {
       return res.status(400).send('Email is taken')
     }
-
     const hashedPassword = await hashPassword(password)
     const token = jwt.sign({ _id: nanoid(10) }, process.env.JWT_SECRET, {
       expiresIn: '1m',

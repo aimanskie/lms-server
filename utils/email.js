@@ -230,6 +230,7 @@ export const FORGOTPASSWORD = (email, shortCode, name) => {
 }
 
 export const REGISTER = (email, name, token) => {
+  console.log('in register')
   const registerEmail = {
     Source: `Admin <${process.env.EMAIL_FROM}>`,
     Destination: {
