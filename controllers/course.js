@@ -369,7 +369,7 @@ export const stripeSuccess = async (req, res) => {
         PAIDCOURSE(id, amount_total, currency, address, email, name, course, date, payment_intent)
       ).promise()
     }
-
+    console.log('success email')
     res.json({ success: true, course })
   } catch (err) {
     console.log(err)
