@@ -20,8 +20,11 @@ mongoose
   .then(() => app.listen(port, () => console.log(`Server is running on port ${port}`)))
   .catch((err) => console.log('db connection error => ', err))
 
+// app.options('*', cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }))
+
+// app.use(cors({ origin: 'http://localhost:3000', optionsSuccessStatus: 200 }))
 app.use(cors())
-app.use(express.json({ limit: '50mb' }))
+app.use(express.json())
 app.use(cookieParser())
 app.use(morgan('dev'))
 

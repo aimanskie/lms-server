@@ -159,7 +159,7 @@ export const removeVideo = async (req, res) => {
 export const addLesson = async (req, res) => {
   try {
     const { slug, instructorId } = req.params
-    const { title, content, video } = req.body
+    const { title, content, video, pdf } = req.body
 
     if (req.user._id != instructorId) {
       return res.status(400).send('Unauthorized')
@@ -168,7 +168,7 @@ export const addLesson = async (req, res) => {
     const updated = await Course.findOneAndUpdate(
       { slug },
       {
-        $push: { lessons: { title, content, video, slug: slugify(title) } },
+        $push: { lessons: { title, content, video, slug: slugify(title), pdf } },
       },
       { new: true }
     )
@@ -439,6 +439,35 @@ export const markIncomplete = async (req, res) => {
       }
     ).exec()
     res.json({ ok: true })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const uploadPdf = async (req, res) => {
+  try {
+    if (req.user._id != req.params.instructorId) {
+      return res.status(400).send('Unauthorized')
+    }
+
+    const { pdf } = req.files
+    if (!pdf) return res.status(400).send('No video')
+
+    const params = {
+      Bucket: 'ems-dev',
+      Key: `${nanoid()}.${pdf.type.split('/')[1]}`,
+      Body: readFileSync(pdf.path),
+      ACL: 'public-read',
+      ContentType: pdf.type,
+      ContentDisposition: 'attachment; filename=test.pdf',
+    }
+
+    S3.upload(params, (err, data) => {
+      if (err) {
+        res.sendStatus(400)
+      }
+      res.send(data)
+    })
   } catch (err) {
     console.log(err)
   }

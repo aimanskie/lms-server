@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
-const { ObjectId } = mongoose.Schema;
+const { ObjectId } = mongoose.Schema
 
 const lessonSchema = new mongoose.Schema(
   {
@@ -24,9 +24,10 @@ const lessonSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    pdf: {},
   },
   { timestamps: true }
-);
+)
 
 const courseSchema = new mongoose.Schema(
   {
@@ -62,12 +63,12 @@ const courseSchema = new mongoose.Schema(
     },
     instructor: {
       type: ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     lessons: [lessonSchema],
   },
   { timestamps: true }
-);
+)
 
-export default mongoose.model("Course", courseSchema);
+export default mongoose.model('Course', courseSchema)

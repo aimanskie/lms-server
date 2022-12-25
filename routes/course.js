@@ -24,6 +24,7 @@ import {
   listCompleted,
   markIncomplete,
   allUsers,
+  uploadPdf,
 } from '../controllers/course.js'
 const router = express.Router()
 
@@ -40,6 +41,12 @@ router.post(
   requireSignin,
   formidable({ maxFileSize: 500 * 1024 * 1024 }),
   uploadVideo
+)
+router.post(
+  '/course/pdf-upload/:instructorId',
+  requireSignin,
+  formidable({ maxFileSize: 500 * 1024 * 1024 }),
+  uploadPdf
 )
 router.post('/course/video-remove/:instructorId', requireSignin, removeVideo)
 
