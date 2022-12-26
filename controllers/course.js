@@ -472,3 +472,26 @@ export const uploadPdf = async (req, res) => {
     console.log(err)
   }
 }
+
+export const removePdf = async (req, res) => {
+  try {
+    if (req.user._id != req.params.instructorId) {
+      return res.status(400).send('Unauthorized')
+    }
+
+    const { Bucket, Key } = req.body
+    const params = {
+      Bucket,
+      Key,
+    }
+
+    S3.deleteObject(params, (err, data) => {
+      if (err) {
+        res.sendStatus(400)
+      }
+      res.send({ ok: true })
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}

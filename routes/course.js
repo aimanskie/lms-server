@@ -25,6 +25,7 @@ import {
   markIncomplete,
   allUsers,
   uploadPdf,
+  removePdf,
 } from '../controllers/course.js'
 const router = express.Router()
 
@@ -49,6 +50,7 @@ router.post(
   uploadPdf
 )
 router.post('/course/video-remove/:instructorId', requireSignin, removeVideo)
+router.post('/course/pdf-remove/:instructorId', requireSignin, removePdf)
 
 router.put('/course/publish/:courseId', requireSignin, publishCourse)
 router.put('/course/unpublish/:courseId', requireSignin, unpublishCourse)
