@@ -217,7 +217,7 @@ export const updateLesson = async (req, res) => {
     const { slug } = req.params
     const { _id, title, content, video, free_preview } = req.body
     const course = await Course.findOne({ slug }).select('instructor').exec()
-
+    console.log(title, content, video, free_preview)
     if (course.instructor._id != req.user._id) {
       return res.status(400).send('Unauthorized')
     }
@@ -233,8 +233,9 @@ export const updateLesson = async (req, res) => {
         },
       },
       { new: true }
-    ).exec()
-    res.json({ ok: true })
+    )
+    console.log(updated)
+    res.json({ ok: true, updated })
   } catch (err) {
     return res.status(400).send('Update lesson failed')
   }
