@@ -64,20 +64,14 @@ export const login = async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({ checking: true, email }).exec()
     if (!user) return res.status(400).send('No user found')
-    // check password
     const match = await comparePassword(password, user.password)
     if (!match) return res.status(400).send('Wrong password')
 
-    // create signed jwt
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
-    // return user and token to client, exclude hashed password
     user.password = undefined
-    // send token in cookie
     res.cookie('token', token, {
       httpOnly: true,
-      // secure: true, // only works on https
     })
-    // send user as json response
     res.json(user)
   } catch (err) {
     return res.status(400).send('Error. Try again.')
