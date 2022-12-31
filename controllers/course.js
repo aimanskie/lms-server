@@ -187,13 +187,13 @@ export const update = async (req, res) => {
     if (req.user._id != course.instructor) {
       return res.status(400).send('Unauthorized')
     }
-
     const updated = await Course.findOneAndUpdate({ slug }, req.body, {
       new: true,
     }).exec()
 
-    res.json(updated)
+    res.status(200).json({ ok: true })
   } catch (err) {
+    console.log(err)
     return res.status(400).send(err.message)
   }
 }
